@@ -1,0 +1,51 @@
+{
+  "version": "0",
+  "id": "3887b7d8-fb59-9a14-7dd2-99f2caf00fc0",
+  "detail-type": "AWS API Call via CloudTrail",
+  "source": "aws.iam",
+  "account": "111122223333",
+  "time": "2019-12-23T18:22:07Z",
+  "region": "us-east-1",
+  "resources": [],
+  "detail": {
+    "eventVersion": "1.05",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAUR7KWXJQLWZZ56LRA",
+      "arn": "arn:aws:iam::313487964768:user/drona-for-you",
+      "accountId": "313487964768",
+      "accessKeyId": "ASIAUR7KWXJQJUP5YLRH",
+      "userName": "drona-for-you",
+      "sessionContext": {
+        "attributes": {
+          "mfaAuthenticated": "false",
+          "creationDate": "2019-12-31T12:54:33Z"
+        }
+      },
+      "invokedBy": "signin.amazonaws.com"
+    },
+    "eventTime": "2019-12-31T14:38:48Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "CreateUser",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "85.144.205.34",
+    "userAgent": "signin.amazonaws.com",
+    "requestParameters": {
+      "userName": "trigUser",
+      "tags": []
+    },
+    "responseElements": {
+      "user": {
+        "path": "/",
+        "arn": "arn:aws:iam::313487964768:user/trigUser",
+        "userId": "AIDAUR7KWXJQLO4DL4K4C",
+        "createDate": "Dec 31, 2019 2:38:48 PM",
+        "userName": "trigUser"
+      }
+    },
+    "requestID": "7dab8154-d68c-480f-bb01-b8dcea8eb7a0",
+    "eventID": "ac0d070a-92a2-4fa3-b085-aec173263c47",
+    "eventType": "AwsApiCall",
+    "recipientAccountId": "313487964768"
+  }
+}

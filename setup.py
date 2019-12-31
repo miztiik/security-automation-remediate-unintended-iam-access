@@ -9,14 +9,14 @@ setuptools.setup(
     name="security_automation_remediate_unintended_iam_access",
     version="0.0.1",
 
-    description="An empty CDK Python app",
+    description="security_automation_remediate_unintended_iam_access",
     long_description=long_description,
     long_description_content_type="text/markdown",
 
     author="author",
 
-    package_dir={"": "security_automation_remediate_unintended_iam_access"},
-    packages=setuptools.find_packages(where="security_automation_remediate_unintended_iam_access"),
+    package_dir={"": "remediate_unintended_iam_access"},
+    packages=setuptools.find_packages(where="remediate_unintended_iam_access"),
 
     install_requires=[
         "aws-cdk.core",
