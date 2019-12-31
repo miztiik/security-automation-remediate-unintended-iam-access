@@ -1,5 +1,5 @@
 
-# Security Automation: Monitor & Revoke Unintended IAM Access
+# Security Automation: Monitor, Detect and Revoke Unintended IAM Access
 
 Is your AWS account shared across departments in your organization? Do you monitor the permissions of your users? If you have multiple accounts, used by different business entitites, keeping track of IAM privileges can become a challenge as the number of users grows. For example, Can you answer these questions definitively?
 
@@ -128,7 +128,7 @@ Buy me a coffee ☕ through [Paypal](https://paypal.me/valaxy), _or_ You can rea
 ### References
 
 1. [IAM Policy Evaluation Logic](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html)
-1. [Monitor and Visualize Failed SSH Access Attempts](https://aws.amazon.com/blogs/security/how-to-monitor-and-visualize-failed-ssh-access-attempts-to-amazon-ec2-linux-instances/)
+1. [Detect Unintended IAM Access](https://aws.amazon.com/blogs/security/how-to-monitor-and-visualize-failed-ssh-access-attempts-to-amazon-ec2-linux-instances/)
 
 ### Metadata
 
