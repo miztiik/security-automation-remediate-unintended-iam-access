@@ -1,5 +1,5 @@
 
-# Security Automation: Monitor Unintended IAM Access
+# Security Automation: Monitor & Revoke Unintended IAM Access
 
 Is your AWS account shared across departments in your organization? Do you monitor the permissions of your users? If you have multiple accounts, used by different business entitites, keeping track of IAM privileges can become a challenge as the number of users grows. For example, Can you answer these questions definitively?
 
@@ -10,7 +10,7 @@ Is your AWS account shared across departments in your organization? Do you monit
 
 That is exactly what we are going to do right now using, `AWS IAM`, `AWS CloudWatch`, `AWS StepFunctions` & `SNS`
 
-  ![Miztiik AWS Security Automation: Remediate Unintended S3 Object ACLs](images/security_automation_remediate_unintended_iam_access_architecture.png.png)
+  ![Miztiik ecurity Automation: Monitor Unintended IAM Access](images/security_automation_remediate_unintended_iam_access_architecture.png)
 
   Follow this article in **[Youtube](https://www.youtube.com/c/ValaxyTechnologies)**
 
