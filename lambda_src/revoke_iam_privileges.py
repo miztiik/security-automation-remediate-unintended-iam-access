@@ -35,7 +35,7 @@ def revoke_iam_by_inline_policy(user_name):
             "Version": "2012-10-17",
             "Statement": [
                 {
-                    "Action": "iam:*,
+                    "Action": "iam:*",
                     "Resource": "*",
                     "Effect": "Deny",
                     "Sid": "DenyIAMPermissions"
