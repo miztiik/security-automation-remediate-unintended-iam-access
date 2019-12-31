@@ -1,0 +1,362 @@
+{
+  "Resources": {
+    "denyiampolicy8613EC99": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "iam:*",
+              "Effect": "Deny",
+              "Resource": "*",
+              "Sid": "DenyAllPermissions"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "A policy to deny IAM permissions",
+        "ManagedPolicyName": "deny_iam_privileges",
+        "Path": "/"
+      },
+      "Metadata": {
+        "aws:cdk:path": "remediate-unintended-iam-access/deny_iam_policy/Resource"
+      }
+    },
+    "revokeIamPrivilegesFnIdServiceRoleF82A3748": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "remediate-unintended-iam-access/revokeIamPrivilegesFnId/ServiceRole/Resource"
+      }
+    },
+    "revokeIamPrivilegesFnIdServiceRoleDefaultPolicyF51CE07C": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "iam:AttachRolePolicy",
+                "iam:AttachUserPolicy",
+                "iam:ListAttachedUserPolicies",
+                "iam:ListGroupsForUser",
+                "iam:PutUserPolicy"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "AllowLambdaToQuarantineUser"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "revokeIamPrivilegesFnIdServiceRoleDefaultPolicyF51CE07C",
+        "Roles": [
+          {
+            "Ref": "revokeIamPrivilegesFnIdServiceRoleF82A3748"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "remediate-unintended-iam-access/revokeIamPrivilegesFnId/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "revokeIamPrivilegesFnId8F8CC9D8": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ZipFile": "# -*- coding: utf-8 -*-\nimport json\nimport logging\nimport boto3\nimport os\n\nfrom botocore.exceptions import ClientError\n\n__author__      = 'Mystique'\n__email__       = 'miztiik@github'\n__version__     = '0.0.1'\n__status__      = 'production'\n\n\nclass global_args:\n    LOG_LEVEL                   = logging.INFO\n    MAX_POLICY_PER_USER         = 10\n\n\ndef set_logging(lv=global_args.LOG_LEVEL):\n    logging.basicConfig(level=lv)\n    logger = logging.getLogger()\n    logger.setLevel(lv)\n    return logger\n\n\nLOGGER = set_logging(logging.INFO)\n\n\ndef revoke_iam_by_inline_policy(user_name):\n    resp = {'status': False,}\n    client = boto3.client('iam')\n    try:\n        _policy={\n            \"Version\": \"2012-10-17\",\n            \"Statement\": [\n                {\n                    \"Action\": \"iam:*,\n                    \"Resource\": \"*\",\n                    \"Effect\": \"Deny\",\n                    \"Sid\": \"DenyIAMPermissions\"\n                }\n            ]\n        }\n        a_resp = client.put_user_policy(\n            UserName=user_name,\n            PolicyName='deny_iam_privileges',\n            PolicyDocument=json.dumps(_policy)\n            )\n        if a_resp['ResponseMetadata']['HTTPStatusCode'] == 200:\n            resp['status'] = True\n    except ClientError as e:\n        LOGGER.error(f\"Unable to add inline Policy. ERROR:{str(e)}\")\n        resp['error_message'] = str(e)\n    return resp\n\n\ndef revoke_iam_access(user_name):\n    resp = {'status': False,}\n    client = boto3.client('iam')\n    try:\n        curr_managed_policies_attached = len(client.list_attached_user_policies(UserName=user_name)['AttachedPolicies'])\n        if  curr_managed_policies_attached < global_args.MAX_POLICY_PER_USER:\n            a_resp = client.attach_user_policy(\n                UserName=user_name,\n                PolicyArn=os.environ.get('DENY_IAM_POLICY_ARN')\n                )\n            if a_resp['ResponseMetadata']['HTTPStatusCode'] == 200:\n                resp['status'] = True\n                resp['iam_privileges_revoked'] = True\n        else:\n            a_resp = revoke_iam_by_inline_policy(user_name)\n            if a_resp:\n                resp['iam_privileges_revoked'] = True\n                resp['status'] = True\n    except ClientError as e:\n        LOGGER.error(f\"Unable to add policy. ERROR:{str(e)}\")\n        resp['error_message'] = str(e)\n    return resp\n\n\ndef is_user_admin(user_name):\n    resp = {'status': False,'is_admin':False}\n    client = boto3.client('iam')\n    try:\n        g_resp = client.list_groups_for_user( UserName = user_name )\n        for g in g_resp['Groups']:\n            if g['GroupName'] == os.environ.get('ADMIN_GROUP_NAME'):\n                LOGGER.info(f\"User is member of group:{g['GroupName']}\")\n                resp['is_admin'] = True\n                break\n        resp['status'] = True\n    except ClientError as e:\n        LOGGER.error(f\"Unable to get {user_name} group membership. ERROR:{str(e)}\")\n        resp['error_message'] = str(e)\n    return resp\n\n\ndef lambda_handler(event, context):\n    resp = {'status': False}\n    LOGGER.info(f'Event:{event}')\n\n    if not 'ADMIN_GROUP_NAME' in os.environ or not 'DENY_IAM_POLICY_ARN' in os.environ:\n        resp['error_message'] = f'ADMIN_GROUP_NAME or DENY_IAM_POLICY_ARN is NOT provided'\n        return resp\n\n    if 'detail' not in event or 'userName' not in event['detail']['userIdentity'] or event['detail']['userIdentity']['type'] != 'IAMUser':\n        resp['error_message'] = f\"Action not triggered by IAMUser\"\n        return resp\n\n    user_name = event['detail']['userIdentity']['userName']\n    resp['user_name'] = user_name\n    g_resp = is_user_admin(user_name)\n\n    if not g_resp.get('status'):\n        resp['error_message'] = g_resp.get('error_message')\n\n    resp['is_admin']=g_resp.get('is_admin')\n\n    # Revoke Access, if NOT Admin\n    if not resp['is_admin']:\n        r_resp = revoke_iam_access(user_name)\n        resp['status'] = r_resp.get('status')\n        resp['iam_privileges_revoked'] = r_resp.get('iam_privileges_revoked')\n\n    LOGGER.info(resp)\n    return resp\n"
+        },
+        "Handler": "index.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "revokeIamPrivilegesFnIdServiceRoleF82A3748",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.7",
+        "Environment": {
+          "Variables": {
+            "ADMIN_GROUP_NAME": "admins",
+            "DENY_IAM_POLICY_ARN": {
+              "Ref": "denyiampolicy8613EC99"
+            }
+          }
+        },
+        "FunctionName": "revoke_iam_privileges_fn",
+        "Tags": [
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          }
+        ],
+        "Timeout": 5
+      },
+      "DependsOn": [
+        "revokeIamPrivilegesFnIdServiceRoleDefaultPolicyF51CE07C",
+        "revokeIamPrivilegesFnIdServiceRoleF82A3748"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "remediate-unintended-iam-access/revokeIamPrivilegesFnId/Resource"
+      }
+    },
+    "revokeIamPrivilegesFnIdAllowEventRuleremediateunintendediamaccessiamEventRuleId3ADD2B84E8A4B933": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "revokeIamPrivilegesFnId8F8CC9D8",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "iamEventRuleId395A4FE5",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "remediate-unintended-iam-access/revokeIamPrivilegesFnId/AllowEventRuleremediateunintendediamaccessiamEventRuleId3ADD2B84"
+      }
+    },
+    "iamEventRuleId395A4FE5": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Trigger an event for IAM Events",
+        "EventPattern": {
+          "detail": {
+            "eventSource": [
+              "iam.amazonaws.com"
+            ],
+            "userIdentity": {
+              "type": [
+                "IAMUser"
+              ]
+            }
+          },
+          "detail-type": [
+            "AWS API Call via CloudTrail"
+          ],
+          "source": [
+            "aws.iam"
+          ]
+        },
+        "Name": "iam_event_pattern_MystiqueInfoSecurity",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "revokeIamPrivilegesFnId8F8CC9D8",
+                "Arn"
+              ]
+            },
+            "Id": "Target0"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "remediate-unintended-iam-access/iamEventRuleId/Resource"
+      }
+    },
+    "cloudEventTrailIdS3CD20F8AC": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "remediate-unintended-iam-access/cloudEventTrailId/S3/Resource"
+      }
+    },
+    "cloudEventTrailIdS3PolicyBDF0A48E": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "cloudEventTrailIdS3CD20F8AC"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetBucketAcl",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "cloudEventTrailIdS3CD20F8AC",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-acl": "bucket-owner-full-control"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "cloudEventTrailIdS3CD20F8AC",
+                        "Arn"
+                      ]
+                    },
+                    "/AWSLogs/",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "remediate-unintended-iam-access/cloudEventTrailId/S3/Policy/Resource"
+      }
+    },
+    "cloudEventTrailIdE148D40B": {
+      "Type": "AWS::CloudTrail::Trail",
+      "Properties": {
+        "IsLogging": true,
+        "S3BucketName": {
+          "Ref": "cloudEventTrailIdS3CD20F8AC"
+        },
+        "EnableLogFileValidation": false,
+        "EventSelectors": [],
+        "IncludeGlobalServiceEvents": true,
+        "IsMultiRegionTrail": false,
+        "Tags": [
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          }
+        ]
+      },
+      "DependsOn": [
+        "cloudEventTrailIdS3PolicyBDF0A48E"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "remediate-unintended-iam-access/cloudEventTrailId/Resource"
+      }
+    }
+  },
+  "Outputs": {
+    "SecuirtyAutomationBy": {
+      "Description": "To know more about this automation stack, check out our github page.",
+      "Value": "https://github.com/miztiik/security-automation-remediate-unintended-iam-access"
+    },
+    "LambdaFunction": {
+      "Description": "The Quarantine Lambda Function",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://console.aws.amazon.com/lambda/home?region=",
+            {
+              "Ref": "AWS::Region"
+            },
+            "#functions/",
+            {
+              "Ref": "revokeIamPrivilegesFnId8F8CC9D8"
+            }
+          ]
+        ]
+      }
+    },
+    "CreateUser": {
+      "Description": "command to create users",
+      "Value": "aws iam create-user --user-name Mystique$RANDOM"
+    },
+    "DeleteUser": {
+      "Description": "command to delete users",
+      "Value": "aws iam delete-user --user-name Mystique*"
+    }
+  }
+}
