@@ -9,7 +9,7 @@
               "Action": "iam:*",
               "Effect": "Deny",
               "Resource": "*",
-              "Sid": "DenyAllPermissions"
+              "Sid": "DenyIAMPermissions"
             }
           ],
           "Version": "2012-10-17"

@@ -28,9 +28,9 @@ class RemediateUnintendedIamAccessStack(core.Stack):
             resources=['*'],
             actions=['iam:*'],
             effect=_iam.Effect.DENY,
-            # sid='denyAllPermissions'
+            # sid='DenyIAMPermissions'
         )
-        deny_iam_policy_statement.sid="DenyAllPermissions"
+        deny_iam_policy_statement.sid="DenyIAMPermissions"
 
         deny_iam_policy = _iam.ManagedPolicy(
             self,
