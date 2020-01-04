@@ -8,11 +8,11 @@ Ever wondered how to solve this problem and do this efficiently at cloud scale?
 - What if, You can automatically approve the change if it is compliant to security standards?
 - What if, You can revoke the change change and notify SecOps if it is non compliant?
 
-    That is exactly what we are going to do right now using, `AWS CloudTrail`, `AWS EventBridge`, `AWS StepFunctions` and`AWS Config`.
+    That is exactly what we are going to do right now using `AWS CloudTrail`, `AWS EventBridge`, `AWS StepFunctions` and `AWS Config`.
 
   ![Miztiik AWS Security Automation: Remediate Weak S3 Bucket Policies](images/miztiik_security_automation_remediate_weak_s3_policy_architecture.png)
 
-  Follow this article in **[Youtube](https://youtu.be/a4gOXBrVe6w)**
+  Follow this article in **[Youtube](https://www.youtube.com/c/ValaxyTechnologies)**
 
   For every `PutBucketPolicy` event, we will check if the `Principal` is `*` and `Effect` is `Allow`. If it is the case, we remove this policy statement and restore the previous bucket policy from AWS Config.
 
@@ -66,9 +66,9 @@ Ever wondered how to solve this problem and do this efficiently at cloud scale?
 
         ```sh
         aws cloudformation deploy \
-                --template-file ./cdk.out/security-automation-remediate-weak-s3-policy.template.json \
-                --stack-name "MiztiikAutomationStack" \
-                --capabilities CAPABILITY_IAM
+            --template-file ./cdk.out/security-automation-remediate-weak-s3-policy.template.json \
+            --stack-name "MiztiikAutomationStack" \
+            --capabilities CAPABILITY_IAM
         ```
 
 1. ## Testing the solution
