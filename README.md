@@ -29,7 +29,7 @@ That is exactly what we are going to do right now using, `AWS IAM`, `AWS CloudWa
     - **DENY-IAM-Policy**: A customer managed policy that denies iam permissions. 
         - Deny policy takes precedance over other policies<sup>[Ref#1](###references)</sup>
     - **Lambda**:
-        - *EXTREME REMEDIATION ACTION*: Quarantines the IAM user with `DENY-ALL` policy
+        - *EXTREME REMEDIATION ACTION*: Quarantines the IAM user with `DENY-IAM` policy
             - As this is a demo, This automation will revoke IAM privileges for the user with the deny iam policy. You can modify this lambda to suit your needs
             - Will quarantine user ONLY when user is **NOT** part of `admins` group
     - **EventBridge Rule**: Triggers the Lambda function
