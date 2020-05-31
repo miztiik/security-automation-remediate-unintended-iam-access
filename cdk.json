@@ -3,10 +3,13 @@
   "context": {
     "owner": "Mystique",
     "github_profile": "https://github.com/miztiik",
-    "youtube_profile" : "https://youtube.com/c/valaxytechnologies",
+    "youtube_profile": "https://youtube.com/c/valaxytechnologies",
+    "udemy_profile": "https://www.udemy.com/user/n-kumar",
+    "skill_profile": "https://www.skillshare.com/r/profile/Kumar/407603333",
+    "learn_aws_advanced_security": "https://www.udemy.com/course/aws-cloud-security-proactive-way",
     "service_name": "remediate_unintended_iam_access",
-    "env" :{
-      "production":{
+    "env": {
+      "production": {
         "env_name": "production"
       }
     }

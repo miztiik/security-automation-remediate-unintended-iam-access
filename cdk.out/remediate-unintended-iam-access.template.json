@@ -63,6 +63,14 @@
           {
             "Key": "ToKnowMore",
             "Value": "https://youtube.com/c/valaxytechnologies"
+          },
+          {
+            "Key": "LearnAWSSecurity",
+            "Value": "https://www.udemy.com/course/aws-cloud-security-proactive-way"
+          },
+          {
+            "Key": "AboutMe",
+            "Value": "https://www.udemy.com/user/n-kumar"
           }
         ]
       },
@@ -136,6 +144,14 @@
           {
             "Key": "ToKnowMore",
             "Value": "https://youtube.com/c/valaxytechnologies"
+          },
+          {
+            "Key": "LearnAWSSecurity",
+            "Value": "https://www.udemy.com/course/aws-cloud-security-proactive-way"
+          },
+          {
+            "Key": "AboutMe",
+            "Value": "https://www.udemy.com/user/n-kumar"
           }
         ],
         "Timeout": 5
@@ -225,6 +241,14 @@
           {
             "Key": "ToKnowMore",
             "Value": "https://youtube.com/c/valaxytechnologies"
+          },
+          {
+            "Key": "LearnAWSSecurity",
+            "Value": "https://www.udemy.com/course/aws-cloud-security-proactive-way"
+          },
+          {
+            "Key": "AboutMe",
+            "Value": "https://www.udemy.com/user/n-kumar"
           }
         ]
       },
@@ -316,6 +340,14 @@
           {
             "Key": "ToKnowMore",
             "Value": "https://youtube.com/c/valaxytechnologies"
+          },
+          {
+            "Key": "LearnAWSSecurity",
+            "Value": "https://www.udemy.com/course/aws-cloud-security-proactive-way"
+          },
+          {
+            "Key": "AboutMe",
+            "Value": "https://www.udemy.com/user/n-kumar"
           }
         ]
       },

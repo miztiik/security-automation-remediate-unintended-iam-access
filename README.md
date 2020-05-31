@@ -23,10 +23,10 @@ That is exactly what we are going to do right now using, `AWS IAM`, `AWS CloudWa
 
 1. ## 🎯 Solution Overview
 
-    In this repo, I have included a cloudformation template that provisions the resources to setup a fully automatic IAM remedation engine.
+    In this repo, I have included a cloudformation template that provisions the resources to set-up a fully automatic IAM remedation engine.
 
     - **DENY-IAM-Policy**: A customer managed policy that denies iam permissions.
-        - Deny policy takes precedence over other policies<sup>[Ref#1](###references)</sup>
+        - Deny policy takes precedence over other policies<sup>[1][1]</sup>
     - **Lambda**:
         - *EXTREME REMEDIATION ACTION*: Quarantines the IAM user with `DENY-IAM` policy
             - As this is a demo, This automation will revoke IAM privileges for the user with the deny iam policy. You can modify this lambda to suit your needs
@@ -47,7 +47,7 @@ That is exactly what we are going to do right now using, `AWS IAM`, `AWS CloudWa
       If you have AWS CDK installed you can close this repository and deploy the stack with,
 
         ```sh
-        # If you DONT have cdk installed
+        # If you DO NOT have cdk installed
         npm install -g aws-cdk
 
         git clone https://github.com/miztiik/security-automation-remediate-unintended-iam-access.git
@@ -56,7 +56,7 @@ That is exactly what we are going to do right now using, `AWS IAM`, `AWS CloudWa
         pip install -r requirements.txt
         ```
 
-      The very first time you deploy an AWS CDK app into an environment _(account/region)_, youâ€™ll need to install a `bootstrap stack`, Otherwise just go ahead and deploy using `cdk deploy`
+      The very first time you deploy an AWS CDK app into an environment _(account/region)_, you will need to install a `bootstrap stack`, Otherwise just go ahead and deploy using `cdk deploy`
 
         ```sh
         cdk bootstrap
@@ -151,7 +151,9 @@ Buy me a [coffee ☕][900].
 
 [102]: https://www.udemy.com/course/aws-cloud-development-kit-from-beginner-to-professional/?referralCode=E15D7FB64E417C547579
 
-[200]: https://github.com/miztiik/cfn-challenges/issues
+[103]: https://www.udemy.com/course/aws-cloudformation-basics?referralCode=93AD3B1530BC871093D6
+
+[200]: https://github.com/miztiik/security-automation-remediate-unintended-iam-access/issues
 
 [899]: https://www.udemy.com/user/n-kumar/
 

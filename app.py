@@ -18,6 +18,8 @@ RemediateUnintendedIamAccessStack(app, "remediate-unintended-iam-access")
 core.Tag.add(app,key="Owner",value=app.node.try_get_context('owner'))
 core.Tag.add(app,key="OwnerProfile",value=app.node.try_get_context('github_profile'))
 core.Tag.add(app,key="ToKnowMore",value=app.node.try_get_context('youtube_profile'))
+core.Tag.add(app,key="LearnAWSSecurity",value=app.node.try_get_context('learn_aws_advanced_security'))
+core.Tag.add(app,key="AboutMe",value=app.node.try_get_context('udemy_profile'))
 
 """
 # Tags in a loop
